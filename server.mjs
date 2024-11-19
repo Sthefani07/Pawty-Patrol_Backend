@@ -3,7 +3,9 @@ import connectDB from './config/db.mjs';
 import dotenv from 'dotenv';
 import cors from 'cors'
 import userRouters from './routes/userRoutes.mjs';
-import locationRouters from './models/Location.mjs';
+import authRoutes from './routes/auth.mjs'
+//import locationRouters from './models/Location.mjs';
+
 
 // Setup -----------------------------
 dotenv.config();
@@ -19,8 +21,9 @@ app.use(cors()) //use cors to connect backend with frontend
 
 
 // Routes ------------------------------
-app.use('/users', userRouters );
-app.use('/location', locationRouters)
+app.use('/api/users', userRouters ); //create 
+app.use('/api/auth', authRoutes); //login
+//app.use('/location', locationRouters)
 
 
 app.listen(PORT, () =>{
