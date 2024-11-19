@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import cors from 'cors'
 import userRouters from './routes/userRoutes.mjs';
 import authRoutes from './routes/auth.mjs'
-//import locationRouters from './models/Location.mjs';
+import locationRoutes from './routes/locationRoutes.mjs'
 
 
 // Setup -----------------------------
@@ -21,9 +21,9 @@ app.use(cors()) //use cors to connect backend with frontend
 
 
 // Routes ------------------------------
-app.use('/api/users', userRouters ); //create 
+app.use('/api/users', userRouters ); //create new user
 app.use('/api/auth', authRoutes); //login
-//app.use('/location', locationRouters)
+app.use('/api/location', locationRoutes)// new location
 
 
 app.listen(PORT, () =>{

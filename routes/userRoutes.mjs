@@ -1,3 +1,5 @@
+// REGISTRATION ROUTE
+
 import express from 'express';
 import User from '../models/User.mjs'
 import dotenv from 'dotenv'
