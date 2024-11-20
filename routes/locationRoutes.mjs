@@ -53,7 +53,7 @@ router.get('/', async (req, res) => {
 });
 
 
-// GET route to search  for location by type or proximity
+// GET route to search  for location by type or proximity --------------------------
 router.get('/search', async (req, res) => {
     try {
         const query = {}; // Initializes an empty object to hold search criteria for querying the db.
@@ -73,6 +73,39 @@ router.get('/search', async (req, res) => {
         console.error(error);
         res.status(500).json({ errors: [{ msg: 'Server Error'}]})
     }
-})
+});
+
+
+// POST review to a location ---------------------------------
+
+router.post('/:id/reviews', authMiddleware, async (req, res) =>{ //authMiddleware make sure that only logged-in users to add a review
+
+    const { text, rating} = req.body; 
+
+    try {
+    const location = await Location.findById(req.params.id);//find location and review using ID
+    
+    if(!location){
+        return res.status(404).json({ msg: 'Location not found'});
+    }
+
+    //create a new review with user ID, message and star rating
+    const newReview = {
+        user: req.user.id,
+        text,
+        rating
+    };
+
+    location.review.push(newReview); //push new review to location
+    await location.save(); // save the updated location to db
+
+    res.json(location.review); 
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ errors: [{ msg: 'Server Error'}]})
+    }
+});
+
 
 export default router;
