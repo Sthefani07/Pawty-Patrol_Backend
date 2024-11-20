@@ -55,6 +55,7 @@ router.get('/', async (req, res) => {
 
 // GET route to search  for location by type or proximity --------------------------
 router.get('/search', async (req, res) => {
+    const {type, lat, lng, maxDistance} = req.query
     try {
         const query = {}; // Initializes an empty object to hold search criteria for querying the db.
         if (type) query.type = type; //check if type ['park', 'cafe','trail'] exists, then add to query
@@ -96,16 +97,20 @@ router.post('/:id/reviews', authMiddleware, async (req, res) =>{ //authMiddlewar
         rating
     };
 
-    location.review.push(newReview); //push new review to location
+    location.reviews.push(newReview); //push new review to location
     await location.save(); // save the updated location to db
 
-    res.json(location.review); 
+    res.json(location.reviews); //reviews from shema
 
     } catch (error) {
         console.error(error);
         res.status(500).json({ errors: [{ msg: 'Server Error'}]})
     }
 });
+
+
+
+
 
 
 export default router;

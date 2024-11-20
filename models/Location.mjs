@@ -11,7 +11,7 @@ const locationShema = new mongoose.Schema({
         coordinates: { type: [Number], required: true }, // [longitude, latitude, find local pet events]
     },
     description: {type: String},
-    review: [{
+    reviews: [{
         user: { type: mongoose.Schema.Types.ObjectId, ref: 'User'},//who wrote the review, connect to the User list
         text: {type: String, required: true}, 
         rating: {type: Number, require: true, min: 1, max: 5},
