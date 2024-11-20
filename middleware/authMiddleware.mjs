@@ -1,5 +1,4 @@
 // middleware to verify JWT tokens and secure protected routes.
-
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 dotenv.config();

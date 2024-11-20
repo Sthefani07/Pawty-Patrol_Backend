@@ -1,6 +1,5 @@
 // Pet-Friendly Locations
 
-
 import mongoose from "mongoose";
 
 const locationShema = new mongoose.Schema({

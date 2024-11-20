@@ -23,7 +23,7 @@ app.use(cors()) //use cors to connect backend with frontend
 // Routes ------------------------------
 app.use('/api/users', userRouters ); //create new user
 app.use('/api/auth', authRoutes); //login
-app.use('/api/location', locationRoutes)// new location
+app.use('/api/locations', locationRoutes)// new location
 
 
 app.listen(PORT, () =>{
