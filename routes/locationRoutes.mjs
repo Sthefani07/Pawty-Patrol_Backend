@@ -109,7 +109,36 @@ router.post('/:id/reviews', authMiddleware, async (req, res) =>{ //authMiddlewar
 });
 
 
+// PUT update the review ----------------------------------------------
 
+router.put('/:locationId/reviews/:reviewId', authMiddleware, async (req, res) => { //authMiddleware make sure that only logged-in users to add a review
+    const { text, rating } = req.body;
+    try {
+        const location = await Location.findById(req.params.locationId);//find location and review using ID
+        if (!location) {
+            return res.status(404).json({ msg: 'Location not found' });
+        }
+
+        //find the review to update
+        const review = location.reviews.find((review) => review._id.toString() === req.params.reviewId);
+        if (!review) {
+            return res.status(404).json({ msg: 'Review not found' })
+        }
+        //check if the review belongs to the user
+        if (review.user.toString() !== req.user.id) {
+            return res.status(401).json({ msg: 'User not authorized' })
+        }
+        //update the review
+        if (text) review.text = text;
+        if (rating) review.rating = rating;
+
+        await location.save();
+        res.json(location.reviews);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ errors: [{ msg: 'Server Error' }] })
+    }
+});
 
 
 
