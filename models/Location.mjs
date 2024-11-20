@@ -12,10 +12,10 @@ const locationShema = new mongoose.Schema({
     },
     description: {type: String},
     review: [{
-        user: { type: mongoose.Schema.Types.ObjectId, ref: 'User'},
-        text: {type: String, required: true},
+        user: { type: mongoose.Schema.Types.ObjectId, ref: 'User'},//who wrote the review, connect to the User list
+        text: {type: String, required: true}, 
         rating: {type: Number, require: true, min: 1, max: 5},
-        date: { type: Data, default: Data.now}
+        date: { type: Date, default: Date.now} //use todays date if left empty
     }]
 });
 
