@@ -141,5 +141,36 @@ router.put('/:locationId/reviews/:reviewId', authMiddleware, async (req, res) =>
 });
 
 
+// DELETE review
+router.delete('/:locationId/reviews/:reviewId', authMiddleware, async (req, res) => { //authMiddleware make sure that only logged-in users to add a review
+    try { 
+        const location = await Location.findById(req.params.locationId);//find location and review by ID
+
+        if (!location) {
+            return res.status(404).json({ msg: 'Location not found' });
+        }
+
+        //find the review to delete
+        const review = location.reviews.find((review) => review._id.toString() === req.params.reviewId);
+
+        if (!review) {
+            return res.status(404).json({ msg: 'Review not found' })
+        }
+        //check if the review belongs to the user
+        if (review.user.toString() !== req.user.id) {
+            return res.status(401).json({ msg: 'User not authorized' })
+        }
+        //remove the review
+        location.reviews = location.reviews.filter(review => review._id.toString() !== req.params.reviewId)
+
+        await location.save();
+        
+        res.json(location.reviews);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ errors: [{ msg: 'Server Error' }] })
+    }
+});
+
 
 export default router;

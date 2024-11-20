@@ -78,7 +78,7 @@ router.post(
             jwt.sign(
                 payload,
                 process.env.jwtSecret,
-                { expiresIn: 3600 }, //optional options object
+                { expiresIn: '7d' }, //optional options object //token valid for 7 days
                 (err, token) => {
                     if (err) throw err;
 
