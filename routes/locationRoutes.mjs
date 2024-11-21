@@ -85,7 +85,7 @@ router.get('/', async (req, res) => {
 router.put('/:id', authMiddleware, async (req, res) => { 
     const { name, type, address, description, date, time } = req.body;
     try {
-        const location = await Location.findById(req.params.locationId);//find location and review using ID
+        const location = await Location.findById(req.params.id);//find location and review using ID
         if (!location) {
             return res.status(404).json({ msg: 'Location not found' });
         }
@@ -107,30 +107,17 @@ router.put('/:id', authMiddleware, async (req, res) => {
 
 
 // DELETE review
-router.delete('/:locationId/reviews/:reviewId', authMiddleware, async (req, res) => { //authMiddleware make sure that only logged-in users to add a review
+router.delete('/:id', authMiddleware, async (req, res) => { //authMiddleware make sure that only logged-in users to add a review
     try { 
-        const location = await Location.findById(req.params.locationId);//find location and review by ID
+        const location = await Location.findById(req.params.id);//find location and review by ID
 
         if (!location) {
             return res.status(404).json({ msg: 'Location not found' });
         }
 
-        //find the review to delete
-        const review = location.reviews.find((review) => review._id.toString() === req.params.reviewId);
-
-        if (!review) {
-            return res.status(404).json({ msg: 'Review not found' })
-        }
-        //check if the review belongs to the user
-        if (review.user.toString() !== req.user.id) {
-            return res.status(401).json({ msg: 'User not authorized' })
-        }
-        //remove the review
-        location.reviews = location.reviews.filter(review => review._id.toString() !== req.params.reviewId)
-
-        await location.save();
+        await location.remove();
         
-        res.json(location.reviews);
+        res.json({ msg: 'Location removed successfuly'});
     } catch (error) {
         console.error(error);
         res.status(500).json({ errors: [{ msg: 'Server Error' }] })
