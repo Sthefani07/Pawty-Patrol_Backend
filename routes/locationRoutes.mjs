@@ -26,7 +26,7 @@ router.post('/',
         try {
             const location = new Location({
             name,
-            type,
+            type: type.toLowerCase(),
             address,
             description,
             date,
@@ -115,7 +115,7 @@ router.delete('/:id', authMiddleware, async (req, res) => { //authMiddleware mak
             return res.status(404).json({ msg: 'Location not found' });
         }
 
-        await location.remove();
+        await Location.deleteOne({ _id: req.params.id });
         
         res.json({ msg: 'Location removed successfuly'});
     } catch (error) {
