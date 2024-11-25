@@ -3,10 +3,10 @@
 import mongoose from "mongoose";
 
 const locationShema = new mongoose.Schema({
-    name:{type: String, required: true},
-    type:{type: String, required: true},
-    address: {type: String, required: true},
-    description: {type: String, required: true},
+    name: { type: String, required: true },
+    type: { type: String, required: true },
+    address: { type: String, required: true },
+    description: { type: String, required: true },
     date: { type: Date, required: true },
     time: { type: String, required: true },
 });
