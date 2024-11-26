@@ -8,36 +8,37 @@ const router = express.Router();
 
 
 // POST ADD A NEW LOCATION-------------------------
-router.post('/', 
-    authMiddleware,[
-        check('name', 'Name is required').not().isEmpty(),
-        check('type', 'Type is required').isIn(['park', 'cafe','trail']),
-        check('address', 'Address is required').not().isEmpty(),
-        check('description', 'Description is required').not().isEmpty(),
-        check('date', 'Date is required and must be in ISO format').isISO8601(),
-        check('time', 'Time is required and must be a valid string').not().isEmpty(),
-    ],
+router.post('/',
+    authMiddleware, [
+    check('name', 'Name is required').not().isEmpty(),
+    check('type', 'Type is required').isIn(['park', 'cafe', 'trail']),
+    check('address', 'Address is required').not().isEmpty(),
+    check('description', 'Description is required').not().isEmpty(),
+    check('date', 'Date is required and must be in ISO format').isISO8601(),
+    check('time', 'Time is required and must be a valid string').not().isEmpty(),
+],
 
     async (req, res) => {
         const errors = validationResult(req); //Check any errors in router.post
-        if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array()});  // and return the error if there is one
+        if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });  // and return the error if there is one
 
-        const { name, type, address, description, date, time} = req.body; //
+        const { name, type, address, description, date, time, userId } = req.body; //
         try {
             const location = new Location({
-            name,
-            type: type.toLowerCase(),
-            address,
-            description,
-            date,
-            time,
-        });
-        await location.save(); //save new location to DB
+                name,
+                type: type.toLowerCase(),
+                address,
+                description,
+                date,
+                time,
+                userId,
+            });
+            await location.save(); //save new location to DB
             res.json(location); //Sends the saved location back as a response to the client.
         } catch (error) {
             console.error(error);
-            res.status(500).json({ errors: [{ msg: 'Server Error'}]})
-        } 
+            res.status(500).json({ errors: [{ msg: 'Server Error' }] })
+        }
     }
 
 );
@@ -50,7 +51,7 @@ router.get('/', async (req, res) => {
         res.json(location);
     } catch (error) {
         console.error(error);
-        res.status(500).json({ errors: [{ msg: 'Server Error'}]});
+        res.status(500).json({ errors: [{ msg: 'Server Error' }] });
     }
 });
 
@@ -82,12 +83,16 @@ router.get('/', async (req, res) => {
 
 // PUT update location ----------------------------------------------
 
-router.put('/:id', authMiddleware, async (req, res) => { 
+router.put('/:id', authMiddleware, async (req, res) => {
     const { name, type, address, description, date, time } = req.body;
     try {
         const location = await Location.findById(req.params.id);//find location and review using ID
         if (!location) {
-            return res.status(404).json({ msg: 'Location not found' });
+            return res.status(404).json({ msg: 'Event not found' });
+        }
+
+        if (location.userId.toString() !== req.user.id) {
+            return res.status(403).json({ msg: 'You are not authorized to edit this event' });
         }
 
         if (name) location.name = name;
@@ -106,18 +111,21 @@ router.put('/:id', authMiddleware, async (req, res) => {
 });
 
 
-// DELETE review
+// DELETE event
 router.delete('/:id', authMiddleware, async (req, res) => { //authMiddleware make sure that only logged-in users to add a review
-    try { 
+    try {
         const location = await Location.findById(req.params.id);//find location and review by ID
 
         if (!location) {
-            return res.status(404).json({ msg: 'Location not found' });
+            return res.status(404).json({ msg: 'Event not found' });
         }
 
+        if (location.userId.toString() !== req.user.id) {
+            return res.status(403).json({ msg: 'You are not authorized to delete this event' });
+        }
         await Location.deleteOne({ _id: req.params.id });
-        
-        res.json({ msg: 'Location removed successfuly'});
+
+        res.json({ msg: 'Location removed successfuly' });
     } catch (error) {
         console.error(error);
         res.status(500).json({ errors: [{ msg: 'Server Error' }] })
