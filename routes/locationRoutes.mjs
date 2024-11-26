@@ -19,6 +19,7 @@ router.post('/',
 ],
 
     async (req, res) => {
+         console.log( req.body);
         const errors = validationResult(req); //Check any errors in router.post
         if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });  // and return the error if there is one
 
